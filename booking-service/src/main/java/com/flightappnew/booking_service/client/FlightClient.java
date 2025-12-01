@@ -1,3 +1,5 @@
+package com.flightappnew.booking_service.client;
+
 import java.time.LocalDate;
 
 import org.springframework.cloud.openfeign.FeignClient;

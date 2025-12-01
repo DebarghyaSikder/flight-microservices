@@ -1,6 +1,4 @@
 package com.flightappnew.booking_service.controller;
-
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,9 +19,8 @@ public class BookingController {
     }
 
     @PostMapping
-    public ResponseEntity<Booking> createBooking(@Valid @RequestBody BookingRequest request) {
-        Booking booking = bookingService.createBooking(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(booking);
+    public Booking createBooking(@RequestBody @Valid BookingRequest request) {
+        return bookingService.createBooking(request);
     }
 
     @GetMapping("/{id}")
