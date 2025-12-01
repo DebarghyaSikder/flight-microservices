@@ -1,0 +1,16 @@
+server:
+  port: 0         # use a random free port for tests
+
+spring:
+  application:
+    name: eureka-server-test
+  cloud:
+    config:
+      enabled: false   # don't talk to config-server in tests
+
+spring.config.import: "optional:configserver:"
+
+eureka:
+  client:
+    register-with-eureka: false
+    fetch-registry: false
