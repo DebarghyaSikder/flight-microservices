@@ -7,22 +7,23 @@ import java.time.LocalDateTime;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+@Document(collection = "bookings")
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-@Document(collection = "bookings")
 public class Booking {
 
     @Id
     private String id;
 
     private String bookingReference;
+
     private String passengerName;
     private String passengerEmail;
 
@@ -34,6 +35,6 @@ public class Booking {
     private int seatsBooked;
     private BigDecimal totalPrice;
 
-    private String status;             	
+    private String status;          
     private LocalDateTime createdAt;
 }
