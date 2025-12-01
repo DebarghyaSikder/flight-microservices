@@ -4,6 +4,13 @@ import com.flightappnew.flight_service.dto.FlightResponse;
 import com.flightappnew.flight_service.dto.FlightSearchRequest;
 import com.flightappnew.flight_service.service.FlightService;
 
+import java.time.LocalDate;
+
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -49,5 +56,14 @@ public class FlightController {
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<FlightResponse> getFlight(@PathVariable String id) {
         return flightService.getById(id);
+    }
+    
+    @GetMapping("/flights/check-availability")
+    public boolean checkAvailability(@RequestParam String flightNumber,
+                                     @RequestParam
+                                     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+                                     LocalDate journeyDate,
+                                     @RequestParam int seats) {
+        return flightService.checkAvailability(flightNumber, journeyDate, seats);
     }
 }

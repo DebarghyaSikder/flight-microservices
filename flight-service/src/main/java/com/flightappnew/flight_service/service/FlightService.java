@@ -8,6 +8,8 @@ import com.flightappnew.flight_service.dto.FlightSearchRequest;
 import com.flightappnew.flight_service.entity.Flight;
 import com.flightappnew.flight_service.repository.FlightRepository;
 
+import java.time.LocalDate;
+
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
@@ -19,6 +21,13 @@ import reactor.core.publisher.Mono;
 public class FlightService {
 
     private final FlightRepository flightRepository;
+    
+    public boolean checkAvailability(String flightNumber, LocalDate journeyDate, int seats) {
+        return flightRepository
+                .findByFlightNumberAndDepartureDate(flightNumber, journeyDate)
+                .map(flight -> flight.getAvailableSeats() >= seats)
+                .orElse(false);
+    }
 
     public Mono<FlightResponse> createFlight(FlightRequest request) {
         Flight flight = Flight.builder()
