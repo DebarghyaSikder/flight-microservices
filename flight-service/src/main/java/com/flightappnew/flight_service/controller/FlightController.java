@@ -6,64 +6,34 @@ import com.flightappnew.flight_service.service.FlightService;
 
 import java.time.LocalDate;
 
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @RestController
 @RequestMapping("/flights")
-@RequiredArgsConstructor
 public class FlightController {
 
     private final FlightService flightService;
 
-    /**
-     * Create a new flight.
-     * POST /flights
-     */
-    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE,
-                 produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseStatus(HttpStatus.CREATED)
-    public Mono<FlightResponse> createFlight(@Valid @RequestBody FlightRequest request) {
-        return flightService.createFlight(request);
+    public FlightController(FlightService flightService) {
+        this.flightService = flightService;
     }
 
-    /**
-     * Search flights by fromPlace, toPlace, departureDate.
-     * POST /flights/search
-     */
-    @PostMapping(value = "/search",
-                 consumes = MediaType.APPLICATION_JSON_VALUE,
-                 produces = MediaType.APPLICATION_JSON_VALUE)
-    public Flux<FlightResponse> searchFlights(@Valid @RequestBody FlightSearchRequest request) {
-        return flightService.searchFlights(request);
-    }
+    // POST /flights – add flight
+    // GET /flights – list flights
 
-    /**
-     * Get single flight by id.
-     * GET /flights/{id}
-     */
-    @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Mono<FlightResponse> getFlight(@PathVariable String id) {
-        return flightService.getById(id);
-    }
-    
-    @GetMapping("/flights/check-availability")
-    public boolean checkAvailability(@RequestParam String flightNumber,
-                                     @RequestParam
-                                     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-                                     LocalDate journeyDate,
-                                     @RequestParam int seats) {
-        return flightService.checkAvailability(flightNumber, journeyDate, seats);
+    @GetMapping("/availability")
+    public Mono<Boolean> checkAvailability(@RequestParam String flightNumber,
+                                           @RequestParam String journeyDate,   
+                                           @RequestParam int seats) {
+        LocalDate date = LocalDate.parse(journeyDate);
+        return flightService.checkAvailability(flightNumber, date, seats);
     }
 }

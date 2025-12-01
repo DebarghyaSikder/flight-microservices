@@ -1,19 +1,14 @@
 package com.flightappnew.booking_service.client;
 
-import java.time.LocalDate;
-
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-@FeignClient(name = "flight-service")
+@FeignClient(name = "FLIGHT-SERVICE")   // must match Eureka app name
 public interface FlightClient {
 
-    @GetMapping("/flights/check-availability")
-    boolean checkAvailability(@RequestParam String flightNumber,
-                              @RequestParam
-                              @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-                              LocalDate journeyDate,
+    @GetMapping("/flights/availability")
+    Boolean checkAvailability(@RequestParam String flightNumber,
+                              @RequestParam String journeyDate,
                               @RequestParam int seats);
 }
