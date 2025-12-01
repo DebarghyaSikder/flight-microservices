@@ -11,19 +11,19 @@ import com.flightappnew.booking_service.dto.BookingRequest;
 import com.flightappnew.booking_service.entity.Booking;
 import com.flightappnew.booking_service.repository.BookingRepository;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
+@RequiredArgsConstructor
 public class BookingService {
 
     private final BookingRepository bookingRepository;
     private final FlightClient flightClient;
 
-    public BookingService(BookingRepository bookingRepository, FlightClient flightClient) {
-        this.bookingRepository = bookingRepository;
-        this.flightClient = flightClient;
-    }
-
+    // CREATE BOOKING (synchronous)
     public Booking createBooking(BookingRequest request) {
 
+        // 1) Check seat availability via Flight service (Feign client)
         boolean available = flightClient.checkAvailability(
                 request.getFlightNumber(),
                 request.getJourneyDate(),
@@ -34,9 +34,11 @@ public class BookingService {
             throw new IllegalStateException("Seats not available for this flight");
         }
 
+        // 2) Calculate total price
         BigDecimal totalPrice =
                 request.getPricePerSeat().multiply(BigDecimal.valueOf(request.getSeats()));
 
+        // 3) Build Booking entity
         Booking booking = Booking.builder()
                 .bookingReference(UUID.randomUUID().toString())
                 .passengerName(request.getPassengerName())
@@ -51,11 +53,14 @@ public class BookingService {
                 .createdAt(LocalDateTime.now())
                 .build();
 
+        // 4) Save & return
         return bookingRepository.save(booking);
     }
 
+    // GET BOOKING BY ID
     public Booking getBooking(String id) {
         return bookingRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Booking not found: " + id));
+                .orElseThrow(() ->
+                        new IllegalArgumentException("Booking not found with id: " + id));
     }
 }
