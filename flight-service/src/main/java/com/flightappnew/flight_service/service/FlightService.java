@@ -22,12 +22,14 @@ public class FlightService {
 
     private final FlightRepository flightRepository;
     
-    public boolean checkAvailability(String flightNumber, LocalDate journeyDate, int seats) {
-        return flightRepository
-                .findByFlightNumberAndDepartureDate(flightNumber, journeyDate)
-                .map(flight -> flight.getAvailableSeats() >= seats)
-                .orElse(false);
-    }
+    public Mono<Boolean> checkAvailability(String flightNumber,
+            LocalDate departureDate,
+            int seats) {
+return flightRepository
+.findAvailable(flightNumber, departureDate, seats)
+.map(flight -> true)
+.defaultIfEmpty(false);
+}
 
     public Mono<FlightResponse> createFlight(FlightRequest request) {
         Flight flight = Flight.builder()
