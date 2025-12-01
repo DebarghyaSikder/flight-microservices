@@ -54,4 +54,8 @@ public class BookingService {
         return bookingRepository.save(booking);
     }
 
+    public Booking getBooking(String id) {
+        return bookingRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Booking not found: " + id));
+    }
 }
