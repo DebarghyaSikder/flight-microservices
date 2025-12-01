@@ -9,21 +9,23 @@ import lombok.Data;
 
 @Data
 @Builder
-public class FlightSearchResponse {
+public class FlightResponse {
 
     private String id;
+
     private String airlineName;
     private String flightNumber;
-
     private String fromPlace;
     private String toPlace;
 
     private LocalDate departureDate;
     private LocalTime departureTime;
-
     private LocalDate arrivalDate;
     private LocalTime arrivalTime;
 
     private BigDecimal price;
-    private Integer availableSeats;
-}
+
+    private int totalSeats;
+    private int availableSeats;
+    private boolean active;
+}	
