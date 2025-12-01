@@ -34,6 +34,6 @@ public class Booking {
     private int seatsBooked;
     private BigDecimal totalPrice;
 
-    private String status;             
+    private String status;             	
     private LocalDateTime createdAt;
 }

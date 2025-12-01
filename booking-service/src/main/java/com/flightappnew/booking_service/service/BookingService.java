@@ -11,8 +11,6 @@ import com.flightappnew.booking_service.dto.BookingRequest;
 import com.flightappnew.booking_service.entity.Booking;
 import com.flightappnew.booking_service.repository.BookingRepository;
 
-import reactor.core.publisher.Mono;
-
 @Service
 public class BookingService {
 
@@ -24,7 +22,7 @@ public class BookingService {
         this.flightClient = flightClient;
     }
 
-    public Mono<Booking> createBooking(BookingRequest request) {
+    public Booking createBooking(BookingRequest request) {
 
         boolean available = flightClient.checkAvailability(
                 request.getFlightNumber(),
@@ -33,7 +31,7 @@ public class BookingService {
         );
 
         if (!available) {
-            return Mono.error(new IllegalStateException("Seats not available for this flight"));
+            throw new IllegalStateException("Seats not available for this flight");
         }
 
         BigDecimal totalPrice =
@@ -55,4 +53,5 @@ public class BookingService {
 
         return bookingRepository.save(booking);
     }
+
 }
