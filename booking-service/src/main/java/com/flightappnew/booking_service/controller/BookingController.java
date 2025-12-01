@@ -19,12 +19,14 @@ public class BookingController {
     }
 
     @PostMapping
-    public Booking createBooking(@RequestBody @Valid BookingRequest request) {
-        return bookingService.createBooking(request);
+    public ResponseEntity<Booking> createBooking(@RequestBody @Valid BookingRequest request) {
+        Booking booking = bookingService.createBooking(request);
+        return ResponseEntity.ok(booking);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Booking> getBooking(@PathVariable String id) {
-        return ResponseEntity.ok(bookingService.getBooking(id));
+        Booking booking = bookingService.getBooking(id);
+        return ResponseEntity.ok(booking);
     }
 }
