@@ -1,27 +1,17 @@
-package com.flightappnew.flight_service.model;
+package com.flightappnew.flight_service.dto;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
-
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
 @Builder
-@NoArgsConstructor
-@AllArgsConstructor
-@Document(collection = "flights")
-public class Flight {
+public class FlightSearchResponse {
 
-    @Id
     private String id;
-
     private String airlineName;
     private String flightNumber;
 
@@ -35,9 +25,5 @@ public class Flight {
     private LocalTime arrivalTime;
 
     private BigDecimal price;
-
-    private Integer totalSeats;
     private Integer availableSeats;
-
-    private Boolean active;
 }
