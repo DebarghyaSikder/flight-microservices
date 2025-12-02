@@ -38,6 +38,9 @@ All services register here automatically:
 - FLIGHT-SERVICE
 - BOOKING-SERVICE
 
+## Eureka Server Dashboard
+<img width="1470" height="916" src="https://github.com/DebarghyaSikder/flight-microservices/blob/main/Eureka-Server-Dashboard.png" />
+
 ---
 
 ## API Gateway (`api-gateway`)
