@@ -22,18 +22,6 @@ This project is a fully distributed flight booking system built using Spring Boo
 
 ---
 
-## 🗂️ Project Structure
-
--flight-microservices/
--│
--├── api-gateway/
--├── booking-service/
--├── config-server/
--├── eureka-server/
--├── flight-service/
--│
--└── flight-config-repo/ (separate GitHub repo)
-
 # Service Details
 
 ---
@@ -74,9 +62,9 @@ A fully reactive WebFlux service.
 - Consume RabbitMQ messages  
 
 ### Sample Endpoints
-`POST /flight`
-`GET /flight/search`
-`GET /flight/{id}`
+- `POST /flight`
+- `GET /flight/search`
+- `GET /flight/{id}`
 
 ### Mongo Database
 `flightdb`
@@ -97,8 +85,8 @@ A blocking MVC service that interacts with flight service.
 `bookingdb`
 
 ### Sample Endpoints
-`POST /bookings`
-`GET /bookings/{id}`
+- `POST /bookings`
+- `GET /bookings/{id}`
 
 # RabbitMQ Integration
 
@@ -106,9 +94,9 @@ A blocking MVC service that interacts with flight service.
 `Booking-Service → RabbitMQ → Flight-Service`
 
 ### Exchange / Queue / Routing Key
--booking.exchange
--booking.queue
--booking.key
+- booking.exchange
+- booking.queue
+- booking.key
 
 RabbitMQ Dashboard:
 `http://localhost:15672`
@@ -117,10 +105,10 @@ RabbitMQ Dashboard:
 
 Stores all config files for:
 
--flight-service.yml
--booking-service.yml
--api-gateway.yml
--eureka-server.yml
+- flight-service.yml
+- booking-service.yml
+- api-gateway.yml
+- eureka-server.yml
 
 
 # How to Run the Entire System
@@ -131,8 +119,8 @@ Stores all config files for:
 
 ### 1. Start MongoDB  
 Databases needed:
-`flightdb`
-`bookingdb`
+- `flightdb`
+- `bookingdb`
 
 
 ### 2. Start RabbitMQ
@@ -140,15 +128,15 @@ rabbitmq-server
 
 
 UI:
-`http://localhost:15672`
+- `http://localhost:15672`
 
 
 ### 3. Start Config Server  
-`localhost:8888`
+- `localhost:8888`
 
 
 ### 4. Start Eureka Server  
-`localhost:8761`
+- `localhost:8761`
 
 ### 5️. Start Flight Service  
 Registers with Eureka → Loads config → Connects to MongoDB.
@@ -168,13 +156,13 @@ System now fully functional.
 #  Testing (Postman)
 
 ### Create Flight
-`POST` `http://localhost:8080/flight`
+- `POST` `http://localhost:8080/flight`
 
 ### Search
-`GET` `http://localhost:8080/flight/search?from=Kolkata&to=Delhi&date=2025-12-25`
+- `GET` `http://localhost:8080/flight/search?from=Kolkata&to=Delhi&date=2025-12-25`
 
 ### Book Flight
-`POST` `http://localhost:8080/bookings`
+- `POST` `http://localhost:8080/bookings`
 
 
 #  Features Implemented
