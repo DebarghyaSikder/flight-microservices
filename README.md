@@ -24,15 +24,15 @@ This project is a fully distributed flight booking system built using Spring Boo
 
 ## 🗂️ Project Structure
 
-flight-microservices/
-│
-├── api-gateway/
-├── booking-service/
-├── config-server/
-├── eureka-server/
-├── flight-service/
-│
-└── flight-config-repo/ (separate GitHub repo)
+-flight-microservices/
+-│
+-├── api-gateway/
+-├── booking-service/
+-├── config-server/
+-├── eureka-server/
+-├── flight-service/
+-│
+-└── flight-config-repo/ (separate GitHub repo)
 
 # Service Details
 
@@ -57,9 +57,9 @@ All services register here automatically:
 Routes external requests to internal microservices.
 
 ### Example routes:
-`spring.cloud.gateway.routes[0].id=flight-service`
-`spring.cloud.gateway.routes[0].uri=lb://FLIGHT-SERVICE`
-`spring.cloud.gateway.routes[0].predicates[0]=Path=/flight/**`
+- `spring.cloud.gateway.routes[0].id=flight-service`
+- `spring.cloud.gateway.routes[0].uri=lb://FLIGHT-SERVICE`
+- `spring.cloud.gateway.routes[0].predicates[0]=Path=/flight/**`
 
 
 ## Flight Service (`flight-service`)
