@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.flightappnew.booking_service.client.FlightClient;
 import com.flightappnew.booking_service.dto.BookingRequest;
 import com.flightappnew.booking_service.entity.Booking;
+import com.flightappnew.booking_service.messaging.BookingProducer;
 import com.flightappnew.booking_service.repository.BookingRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -19,7 +20,7 @@ public class BookingService {
 
     private final BookingRepository bookingRepository;
     private final FlightClient flightClient;
-
+    private final BookingProducer bookingProducer;
     // CREATE BOOKING (synchronous)
     public Booking createBooking(BookingRequest request) {
 
@@ -52,9 +53,12 @@ public class BookingService {
                 .status("CREATED")
                 .createdAt(LocalDateTime.now())
                 .build();
+        
+        booking = bookingRepository.save(booking);
 
+        bookingProducer.sendBookingMessage(booking);
         // 4) Save & return
-        return bookingRepository.save(booking);
+        return booking;
     }
 
     // GET BOOKING BY ID
