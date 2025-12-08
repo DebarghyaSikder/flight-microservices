@@ -62,6 +62,7 @@ All requests must include a valid token in the `Authorization` header.
 - Choose algorithm: HS256
 - Secret
 - We will get a JWT token.
+```
 
 # Dockerized Deployment
 
