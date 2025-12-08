@@ -59,10 +59,12 @@ All requests must include a valid token in the `Authorization` header.
   "role": "USER",
   "iat": 1516239022
 }
+```
+
 - Choose algorithm: HS256
 - Secret
 - We will get a JWT token.
-```
+
 
 # Dockerized Deployment
 
