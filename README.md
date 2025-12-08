@@ -34,7 +34,7 @@ It follows an enterprise-grade microservices architecture with:
 
 ---
 
-# JWT Authentication (NEW)
+# JWT Authentication 
 
 The API Gateway now secures all endpoints using **JWT tokens**.  
 All requests must include a valid token in the `Authorization` header.
