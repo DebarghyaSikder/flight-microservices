@@ -1,0 +1,138 @@
+version: "3.9"
+
+services:
+  # ---------- DATABASE ----------
+  mongodb:
+    image: mongo:7
+    container_name: mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - app-net
+
+  # ---------- RABBITMQ ----------
+  rabbitmq-broker:
+    image: rabbitmq:3-management
+    container_name: rabbitmq-broker
+    ports:
+      - "5672:5672"    # AMQP
+      - "15672:15672"  # Web UI
+    networks:
+      - app-net
+
+  # ---------- CONFIG SERVER ----------
+  config-server:
+    build:
+      context: ./config-server
+    container_name: config-server
+    ports:
+      - "8888:8888"
+    environment:
+      # run in native file system mode
+      SPRING_PROFILES_ACTIVE: native
+      # inside the container, config repo will be mounted at /config-repo
+      SPRING_CLOUD_CONFIG_SERVER_NATIVE_SEARCH-LOCATIONS: file:/config-repo
+    volumes:
+      # host:  ..\flight-config-repo  -> container: /config-repo
+      - ../flight-config-repo:/config-repo:ro
+    depends_on:
+      - mongodb
+    networks:
+      - app-net
+
+  # ---------- EUREKA ----------
+  eureka-server:
+    build:
+      context: ./eureka-server
+    container_name: eureka-server
+    ports:
+      - "8761:8761"
+    environment:
+      # tell it where to fetch global config from
+      SPRING_CONFIG_IMPORT: optional:configserver:http://config-server:8888
+    depends_on:
+      - config-server
+    networks:
+      - app-net
+
+  # ---------- FLIGHT SERVICE ----------
+  flight-service:
+    build:
+      context: ./flight-service
+    container_name: flight-service
+    ports:
+      - "8090:8090"
+    environment:
+      SPRING_CONFIG_IMPORT: optional:configserver:http://config-server:8888
+      EUREKA_CLIENT_SERVICE-URL_DEFAULTZONE: http://eureka-server:8761/eureka
+      SPRING_DATA_MONGODB_URI: mongodb://mongodb:27017/flights_micro_db
+    depends_on:
+      - config-server
+      - eureka-server
+      - mongodb
+    networks:
+      - app-net
+
+  # ---------- BOOKING SERVICE ----------
+  booking-service:
+    build:
+      context: ./booking-service
+    container_name: booking-service
+    ports:
+      - "8091:8091"
+    environment:
+      SPRING_CONFIG_IMPORT: optional:configserver:http://config-server:8888
+      EUREKA_CLIENT_SERVICE-URL_DEFAULTZONE: http://eureka-server:8761/eureka
+      SPRING_DATA_MONGODB_URI: mongodb://mongodb:27017/flights_micro_db
+      SPRING_RABBITMQ_HOST: rabbitmq-broker
+    depends_on:
+      - config-server
+      - eureka-server
+      - mongodb
+      - rabbitmq-broker
+    networks:
+      - app-net
+
+  # ---------- NOTIFICATION SERVICE ----------
+  notification-service:
+    build:
+      context: ./notification-service
+    container_name: notification-service
+    ports:
+      - "8092:8092"   # change if your service uses a different port
+    environment:
+      SPRING_CONFIG_IMPORT: optional:configserver:http://config-server:8888
+      EUREKA_CLIENT_SERVICE-URL_DEFAULTZONE: http://eureka-server:8761/eureka
+      SPRING_RABBITMQ_HOST: rabbitmq-broker
+    depends_on:
+      - config-server
+      - eureka-server
+      - rabbitmq-broker
+    networks:
+      - app-net
+
+  # ---------- API GATEWAY ----------
+  api-gateway:
+    build:
+      context: ./api-gateway
+    container_name: api-gateway
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_CONFIG_IMPORT: optional:configserver:http://config-server:8888
+      EUREKA_CLIENT_SERVICE-URL_DEFAULTZONE: http://eureka-server:8761/eureka
+    depends_on:
+      - config-server
+      - eureka-server
+      - flight-service
+      - booking-service
+    networks:
+      - app-net
+
+networks:
+  app-net:
+
+volumes:
+  mongo_data:
