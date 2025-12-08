@@ -39,6 +39,8 @@ It follows an enterprise-grade microservices architecture with:
 The API Gateway now secures all endpoints using **JWT tokens**.  
 All requests must include a valid token in the `Authorization` header.
 
+![alt text](https://github.com/DebarghyaSikder/flight-microservices/blob/main/images/JWT1.png)
+
 ### What Gateway Validates
 - Token signature  
 - Token expiration  
@@ -82,8 +84,63 @@ This automatically starts:
 ---
 
 ## Docker Architecture Overview
+** docker-compose.yml **
+│
+├── mongodb (Database)
+├── rabbitmq-broker (Messaging Queue)
+├── config-server (Centralized Configuration)
+├── eureka-server (Service Registry)
+├── api-gateway (Routing + JWT Security)
+├── flight-service (Reactive WebFlux)
+├── booking-service (Booking + RabbitMQ Publisher)
+└── notification-service (RabbitMQ Consumer)
+
+# Running the Entire System
+
+###  1. Start All Containers
+
+- From inside the **flight-microservices** folder:
+```docker compose up -d```
+
+![alt text](https://github.com/DebarghyaSikder/flight-microservices/blob/main/images/Docker.png)
+
+![alt text](https://github.com/DebarghyaSikder/flight-microservices/blob/main/images/Docker2.png)
 
 
+
+### 2. Stop All Containers
+```docker compose down```
+
+### 3. View Live Logs
+
+```docker compose logs -f```
+
+### 4. Rebuild Containers After Code Change
+
+```docker compose build```
+```docker compose up -d```
+
+## **Features Implemented**
+
+- Centralized configuration (Spring Cloud Config)
+
+- Service discovery (Eureka)
+
+- JWT security at gateway
+
+- API Gateway routing & filtering
+
+- Reactive + MVC microservices
+
+- RabbitMQ asynchronous messaging
+
+- MongoDB persistence (collections: flights, bookings)
+
+- Feign Client communication
+
+- Fully Dockerized deployment with ONE command
+
+- Works entirely in container network (no localhost dependencies)
 
 
 
