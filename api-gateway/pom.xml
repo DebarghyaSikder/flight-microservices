@@ -54,6 +54,18 @@
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
 
+		<!-- Spring Security for WebFlux / Gateway -->
+		<dependency>
+    	<groupId>org.springframework.boot</groupId>
+    	<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
+
+  		<!-- JWT resource server (validates JWT with secret/public key) -->
+		<dependency>
+    	<groupId>org.springframework.boot</groupId>
+    	<artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
+		</dependency>
+
         <!-- Tests -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
