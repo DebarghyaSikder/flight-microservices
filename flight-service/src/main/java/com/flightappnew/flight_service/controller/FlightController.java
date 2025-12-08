@@ -1,39 +1,59 @@
 package com.flightappnew.flight_service.controller;
+
 import com.flightappnew.flight_service.dto.FlightRequest;
 import com.flightappnew.flight_service.dto.FlightResponse;
 import com.flightappnew.flight_service.dto.FlightSearchRequest;
 import com.flightappnew.flight_service.service.FlightService;
 
-import java.time.LocalDate;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.time.LocalDate;
+
 @RestController
 @RequestMapping("/flights")
+@RequiredArgsConstructor
 public class FlightController {
 
     private final FlightService flightService;
 
-    public FlightController(FlightService flightService) {
-        this.flightService = flightService;
+    // ---------- 1. Add a new flight ----------
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public Mono<FlightResponse> createFlight(@Valid @RequestBody FlightRequest request) {
+        return flightService.createFlight(request);
     }
 
-    // POST /flights – add flight
-    // GET /flights – list flights
+    // ---------- 2. Search flights ----------
+    @PostMapping("/search")
+    public Flux<FlightResponse> searchFlights(@Valid @RequestBody FlightSearchRequest request) {
+        return flightService.searchFlights(request);
+    }
 
+    // ---------- 3. Get by id ----------
+    @GetMapping("/{id}")
+    public Mono<ResponseEntity<FlightResponse>> getById(@PathVariable String id) {
+        return flightService.getById(id)
+                .map(ResponseEntity::ok)
+                .defaultIfEmpty(ResponseEntity.notFound().build());
+    }
+
+    // ---------- 4. Check seat availability (for Booking service / Feign) ----------
     @GetMapping("/availability")
-    public Mono<Boolean> checkAvailability(@RequestParam String flightNumber,
-                                           @RequestParam String journeyDate,   
-                                           @RequestParam int seats) {
-        LocalDate date = LocalDate.parse(journeyDate);
-        return flightService.checkAvailability(flightNumber, date, seats);
+    public Mono<Boolean> checkAvailability(
+            @RequestParam String flightNumber,
+            @RequestParam("departureDate")
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate departureDate,
+            @RequestParam int seats
+    ) {
+        return flightService.checkAvailability(flightNumber, departureDate, seats);
     }
 }

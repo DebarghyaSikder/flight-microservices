@@ -13,14 +13,17 @@ import com.flightappnew.booking_service.messaging.BookingProducer;
 import com.flightappnew.booking_service.repository.BookingRepository;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class BookingService {
 
     private final BookingRepository bookingRepository;
     private final FlightClient flightClient;
     private final BookingProducer bookingProducer;
+
     // CREATE BOOKING (synchronous)
     public Booking createBooking(BookingRequest request) {
 
@@ -53,11 +56,20 @@ public class BookingService {
                 .status("CREATED")
                 .createdAt(LocalDateTime.now())
                 .build();
-        
+
+        // 4) Save to MongoDB
         booking = bookingRepository.save(booking);
 
-        bookingProducer.sendBookingMessage(booking);
-        // 4) Save & return
+        // 5) Try to send RabbitMQ message, but don't fail the whole request if it breaks
+        try {
+            bookingProducer.sendBookingMessage(booking);
+        } catch (Exception ex) {
+            log.error("Failed to send booking message to RabbitMQ for booking {}",
+                    booking.getBookingReference(), ex);
+            // DO NOT rethrow – booking is created, notification is optional
+        }
+
+        // 6) Return booking to client
         return booking;
     }
 

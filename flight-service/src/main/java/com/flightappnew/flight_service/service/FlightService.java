@@ -1,7 +1,5 @@
 package com.flightappnew.flight_service.service;
 
-
-
 import com.flightappnew.flight_service.dto.FlightRequest;
 import com.flightappnew.flight_service.dto.FlightResponse;
 import com.flightappnew.flight_service.dto.FlightSearchRequest;
@@ -9,6 +7,8 @@ import com.flightappnew.flight_service.entity.Flight;
 import com.flightappnew.flight_service.repository.FlightRepository;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 
 import org.springframework.stereotype.Service;
 
@@ -16,31 +16,44 @@ import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+
 @Service
 @RequiredArgsConstructor
 public class FlightService {
 
     private final FlightRepository flightRepository;
-    
-    public Mono<Boolean> checkAvailability(String flightNumber,
-            LocalDate departureDate,
-            int seats) {
-return flightRepository
-.findAvailable(flightNumber, departureDate, seats)
-.map(flight -> true)
-.defaultIfEmpty(false);
-}
 
+
+    public Mono<Boolean> checkAvailability(String flightNumber,
+                                           LocalDate departureDate,
+                                           int seats) {
+        return flightRepository
+                .findByFlightNumberAndDepartureDateAndAvailableSeatsGreaterThanEqual(
+                        flightNumber,
+                        departureDate,
+                        seats
+                )
+                .map(flight -> true)
+                .defaultIfEmpty(false);
+    }
+
+    private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm");
+    
     public Mono<FlightResponse> createFlight(FlightRequest request) {
+
+        // Convert String → LocalTime
+        LocalTime departureTime = LocalTime.parse(request.getDepartureTime(), TIME_FORMATTER);
+        LocalTime arrivalTime = LocalTime.parse(request.getArrivalTime(), TIME_FORMATTER);
+
         Flight flight = Flight.builder()
                 .airlineName(request.getAirlineName())
                 .flightNumber(request.getFlightNumber())
                 .fromPlace(request.getFromPlace())
                 .toPlace(request.getToPlace())
                 .departureDate(request.getDepartureDate())
-                .departureTime(request.getDepartureTime())
+                .departureTime(departureTime)
                 .arrivalDate(request.getArrivalDate())
-                .arrivalTime(request.getArrivalTime())
+                .arrivalTime(arrivalTime)
                 .price(request.getPrice())
                 .totalSeats(request.getTotalSeats())
                 .availableSeats(request.getAvailableSeats())

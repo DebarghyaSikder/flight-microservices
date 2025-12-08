@@ -17,17 +17,21 @@ public class BookingListener {
     @RabbitListener(queues = "booking.queue")
     public void consumeBooking(BookingMessage message) {
 
-        Flight flight = flightRepository.findByFlightNumberAndDepartureDate(
-                message.getFlightNumber(),
-                message.getJourneyDate()
-        ).block();
+        Flight flight = flightRepository
+                .findByFlightNumberAndDepartureDate(
+                        message.getFlightNumber(),
+                        message.getJourneyDate()
+                )
+                .block();  // blocking here is ok because @RabbitListener is synchronous
 
         if (flight != null) {
             int updated = flight.getAvailableSeats() - message.getSeatsBooked();
             flight.setAvailableSeats(updated);
-            flightRepository.save(flight).subscribe();    // Reactive update
+            flightRepository.save(flight).subscribe(); // reactive save
+            System.out.println("Updated seats for flight: " + message.getFlightNumber()
+                    + " | Remaining: " + updated);
+        } else {
+            System.out.println("No flight found for booking message: " + message.getFlightNumber());
         }
-
-        System.out.println("Updated seats for flight: " + message.getFlightNumber());
     }
 }
