@@ -105,7 +105,7 @@ This automatically starts:
 - From inside the **flight-microservices** folder:
 ```docker compose up -d```
 
-![alt text](https://github.com/DebarghyaSikder/flight-microservices/blob/main/images/Docker.png)
+![alt text](https://github.com/DebarghyaSikder/flight-microservices/blob/main/images/Docker1.png)
 
 ![alt text](https://github.com/DebarghyaSikder/flight-microservices/blob/main/images/Docker2.png)
 
