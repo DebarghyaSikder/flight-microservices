@@ -31,10 +31,9 @@ public class SecurityConfig {
                                 "/actuator/**",
                                 "/eureka/**"
                         ).permitAll()
-                        // everything else needs JWT
                         .anyExchange().authenticated()
                 )
-                .oauth2ResourceServer(oauth2 -> oauth2.jwt()) // use our jwtDecoder()
+                .oauth2ResourceServer(oauth2 -> oauth2.jwt()) 
                 .build();
     }
 
