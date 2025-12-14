@@ -26,6 +26,12 @@
     <artifactId>spring-boot-starter-webflux</artifactId>
 </dependency>
 
+<dependency>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-starter-bootstrap</artifactId>
+</dependency>
+
+
 <!-- Reactive MongoDB -->
 <dependency>
     <groupId>org.springframework.boot</groupId>
