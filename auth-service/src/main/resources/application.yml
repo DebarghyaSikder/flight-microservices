@@ -1,0 +1,7 @@
+server:
+  port: 8084
+
+logging:
+  level:
+    com.flightappnew.auth_service: DEBUG
+    org.springframework.r2dbc: INFO
