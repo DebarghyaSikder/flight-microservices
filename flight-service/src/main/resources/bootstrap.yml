@@ -3,16 +3,11 @@ spring:
     name: flight-service
 
   config:
-    # Config Server container name
     import: optional:configserver:http://config-server:8888
 
 eureka:
   client:
+    service-url:
+      defaultZone: http://eureka-server:8761/eureka
     register-with-eureka: true
     fetch-registry: true
-    service-url:
-      # Eureka container name
-      defaultZone: http://eureka-server:8761/eureka
-
-  instance:
-    prefer-ip-address: true

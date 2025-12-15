@@ -1,19 +1,20 @@
 server:
-  port: 8090
+  port: 8092
 
 spring:
   application:
-    name: flight-service
-
-  data:
-    mongodb:
-      uri: mongodb://mongodb:27017/flights_micro_db
+    name: notification-service
 
   rabbitmq:
     host: rabbitmq-broker
     port: 5672
     username: guest
     password: guest
+
+rabbitmq:
+  exchange: booking.exchange
+  routing-key: booking.key
+  queue: booking.queue
 
 management:
   endpoints:
