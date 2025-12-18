@@ -10,7 +10,7 @@ spring:
       discovery:
         locator:
           enabled: true
-          lower-case-service-id: true
+          lower-case-service-id: false
 
       routes:
         - id: flight-service
@@ -18,27 +18,31 @@ spring:
           predicates:
             - Path=/api/flights/**
           filters:
-            - StripPrefix=1
+          - StripPrefix=1  
 
         - id: booking-service
           uri: lb://BOOKING-SERVICE
           predicates:
             - Path=/api/bookings/**
-          filters:
-            - StripPrefix=1
 
         - id: auth-service
           uri: lb://AUTH-SERVICE
           predicates:
             - Path=/api/auth/**
-          filters:
-            - StripPrefix=1
 
   security:
     oauth2:
       resourceserver:
         jwt:
           secret-key: my-super-secret-jwt-key-that-is-long-enough
+
+# 🔴 THIS IS THE IMPORTANT PART
+eureka:
+  client:
+    service-url:
+      defaultZone: http://eureka-server:8761/eureka
+    register-with-eureka: true
+    fetch-registry: true
 
 management:
   endpoints:
