@@ -1,3 +1,5 @@
+version: "3.8"
+
 services:
 
   mongodb:
@@ -20,8 +22,7 @@ services:
       - app-net
 
   config-server:
-    build:
-      context: ./config-server
+    build: ./config-server
     container_name: config-server
     ports:
       - "8888:8888"
@@ -39,22 +40,22 @@ services:
       - app-net
 
   eureka-server:
-    build:
-      context: ./eureka-server
+    build: ./eureka-server
     container_name: eureka-server
     ports:
-      - "8761:8761"
+    - "8761:8761"
     environment:
-      SPRING_CONFIG_IMPORT: optional:configserver:http://config-server:8888
-    depends_on:
-      config-server:
-        condition: service_healthy
+      SPRING_CLOUD_CONFIG_ENABLED: "false"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8761/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
     networks:
-      - app-net
+    - app-net
 
   flight-service:
-    build:
-      context: ./flight-service
+    build: ./flight-service
     container_name: flight-service
     ports:
       - "8090:8090"
@@ -65,7 +66,7 @@ services:
       SPRING_RABBITMQ_HOST: rabbitmq-broker
     depends_on:
       eureka-server:
-        condition: service_started
+        condition: service_healthy
       mongodb:
         condition: service_started
       rabbitmq-broker:
@@ -74,8 +75,7 @@ services:
       - app-net
 
   booking-service:
-    build:
-      context: ./booking-service
+    build: ./booking-service
     container_name: booking-service
     ports:
       - "8091:8091"
@@ -85,14 +85,13 @@ services:
       SPRING_DATA_MONGODB_URI: mongodb://mongodb:27017/flights_micro_db
       SPRING_RABBITMQ_HOST: rabbitmq-broker
     depends_on:
-      flight-service:
-        condition: service_started
+      eureka-server:
+        condition: service_healthy
     networks:
       - app-net
 
   notification-service:
-    build:
-      context: ./notification-service
+    build: ./notification-service
     container_name: notification-service
     ports:
       - "8092:8092"
@@ -101,14 +100,13 @@ services:
       EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: http://eureka-server:8761/eureka
       SPRING_RABBITMQ_HOST: rabbitmq-broker
     depends_on:
-      booking-service:
-        condition: service_started
+      eureka-server:
+        condition: service_healthy
     networks:
       - app-net
 
   api-gateway:
-    build:
-      context: ./api-gateway
+    build: ./api-gateway
     container_name: api-gateway
     ports:
       - "8080:8080"
@@ -116,8 +114,8 @@ services:
       SPRING_CONFIG_IMPORT: optional:configserver:http://config-server:8888
       EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: http://eureka-server:8761/eureka
     depends_on:
-      booking-service:
-        condition: service_started
+      eureka-server:
+        condition: service_healthy
     networks:
       - app-net
 

@@ -1,0 +1,22 @@
+server:
+  port: 8091
+
+spring:
+  application:
+    name: booking-service
+
+  data:
+    mongodb:
+      uri: mongodb://mongodb:27017/flights_micro_db
+
+  rabbitmq:
+    host: rabbitmq-broker
+    port: 5672
+    username: guest
+    password: guest
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
