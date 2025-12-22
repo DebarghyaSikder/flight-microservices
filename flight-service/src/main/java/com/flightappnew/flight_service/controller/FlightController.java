@@ -3,6 +3,7 @@ package com.flightappnew.flight_service.controller;
 import com.flightappnew.flight_service.dto.FlightRequest;
 import com.flightappnew.flight_service.dto.FlightResponse;
 import com.flightappnew.flight_service.dto.FlightSearchRequest;
+import com.flightappnew.flight_service.entity.Flight;
 import com.flightappnew.flight_service.service.FlightService;
 
 import jakarta.validation.Valid;
@@ -32,6 +33,20 @@ public class FlightController {
         return flightService.createFlight(request);
     }
 
+    
+    @PostMapping("/add")
+    public ResponseEntity<Flight> addFlight(
+            @RequestHeader("X-ROLE") String role,
+            @RequestBody Flight flight) {
+
+        if (!"ADMIN".equals(role)) {
+            throw new RuntimeException("Access Denied");
+        }
+
+        return ResponseEntity.ok(flightService.addInventory(flight));
+    }
+
+    
     // ---------- 2. Search flights ----------
     @PostMapping("/search")
     public Flux<FlightResponse> searchFlights(@Valid @RequestBody FlightSearchRequest request) {
