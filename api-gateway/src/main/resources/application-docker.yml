@@ -5,8 +5,7 @@ spring:
   application:
     name: api-gateway
 
-  profiles:
-    active: local
+  profiles: docker
 
   cloud:
     gateway:
@@ -33,7 +32,7 @@ spring:
 eureka:
   client:
     service-url:
-      defaultZone: http://localhost:8761/eureka
+      defaultZone: http://eureka-server:8761/eureka
 
 jwt:
   secret: my-super-secret-key
