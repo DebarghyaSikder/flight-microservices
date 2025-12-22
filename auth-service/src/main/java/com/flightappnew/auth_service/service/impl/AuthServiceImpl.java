@@ -2,6 +2,7 @@ package com.flightappnew.auth_service.service.impl;
 
 import com.flightappnew.auth_service.dto.AuthRequest;
 import com.flightappnew.auth_service.dto.AuthResponse;
+import com.flightappnew.auth_service.dto.ChangePasswordRequest;
 import com.flightappnew.auth_service.dto.RegisterRequest;
 import com.flightappnew.auth_service.dto.ValidateTokenResponse;
 import com.flightappnew.auth_service.entity.User;
@@ -109,6 +110,24 @@ public class AuthServiceImpl implements AuthService {
                             });
                 });
     }
+    
+    @Override
+    public void changePassword(String authHeader, ChangePasswordRequest req) {
+
+        String token = authHeader.substring(7);
+        String username = jwtService.extractUsername(token);
+
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (!passwordEncoder.matches(req.getOldPassword(), user.getPassword())) {
+            throw new RuntimeException("Old password incorrect");
+        }
+
+        user.setPassword(passwordEncoder.encode(req.getNewPassword()));
+        userRepository.save(user);
+    }
+
 
     @Override
     public Mono<ValidateTokenResponse> validateToken(String token) {
