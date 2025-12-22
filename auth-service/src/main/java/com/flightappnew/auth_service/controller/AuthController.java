@@ -2,6 +2,7 @@ package com.flightappnew.auth_service.controller;
 
 import com.flightappnew.auth_service.dto.AuthRequest;
 import com.flightappnew.auth_service.dto.AuthResponse;
+import com.flightappnew.auth_service.dto.ChangePasswordRequest;
 import com.flightappnew.auth_service.dto.RegisterRequest;
 import com.flightappnew.auth_service.dto.ValidateTokenRequest;
 import com.flightappnew.auth_service.dto.ValidateTokenResponse;
@@ -65,6 +66,15 @@ public class AuthController {
                     }
                     return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
                 });
+    }
+    
+    @PostMapping("/change-password")
+    public ResponseEntity<String> changePassword(
+            @RequestHeader("Authorization") String token,
+            @RequestBody ChangePasswordRequest request) {
+
+        authService.changePassword(token, request);
+        return ResponseEntity.ok("Password changed successfully");
     }
 
     @GetMapping("/validate")
