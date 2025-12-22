@@ -1,11 +1,11 @@
 package com.flightappnew.api_gateway.security;
 
 import java.nio.charset.StandardCharsets;
-
 import javax.crypto.spec.SecretKeySpec;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableReactiveMethodSecurity;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
@@ -25,17 +25,20 @@ public class SecurityConfig {
 
         return http
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
+                .cors(cors -> {}) // 🔥 REQUIRED
                 .authorizeExchange(exchanges -> exchanges
 
-                        // 🔓 PUBLIC ENDPOINTS (NO LOGIN REQUIRED)
+                        // 🔥 ALLOW PREFLIGHT
+                        .pathMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+
+                        // PUBLIC
                         .pathMatchers(
-                                "/api/flights/**",   // search flights
-                                "/api/auth/**",      // login, register
+                                "/api/flights/**",
+                                "/api/auth/**",
                                 "/actuator/**",
                                 "/eureka/**"
                         ).permitAll()
 
-                        // 🔐 EVERYTHING ELSE NEEDS JWT
                         .anyExchange().authenticated()
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt())
@@ -44,9 +47,11 @@ public class SecurityConfig {
 
     @Bean
     public ReactiveJwtDecoder jwtDecoder() {
-        SecretKeySpec key =
-                new SecretKeySpec(SECRET.getBytes(StandardCharsets.UTF_8), "HmacSHA256");
-
-        return NimbusReactiveJwtDecoder.withSecretKey(key).build();
+        return NimbusReactiveJwtDecoder.withSecretKey(
+                new SecretKeySpec(
+                        SECRET.getBytes(StandardCharsets.UTF_8),
+                        "HmacSHA256"
+                )
+        ).build();
     }
 }

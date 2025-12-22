@@ -27,9 +27,13 @@ public interface FlightRepository extends ReactiveMongoRepository<Flight, String
     );
 
     // For search API
-    Flux<Flight> findByFromPlaceIgnoreCaseAndToPlaceIgnoreCaseAndDepartureDateAndActiveIsTrue(
-            String fromPlace,
-            String toPlace,
-            LocalDate departureDate
-    );
+    Flux<Flight> findByFromPlaceIgnoreCaseAndToPlaceIgnoreCaseAndDepartureDateBetweenAndActiveTrue(
+    	    String fromPlace,
+    	    String toPlace,
+    	    LocalDate start,
+    	    LocalDate end
+    	);
+
+
+
 }
