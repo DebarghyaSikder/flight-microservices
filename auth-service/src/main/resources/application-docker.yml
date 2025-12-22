@@ -5,17 +5,16 @@ spring:
   application:
     name: auth-service
 
-  profiles:
-    active: local
+  profiles: docker
 
   data:
     mongodb:
-      uri: mongodb://localhost:27017/auth_db
+      uri: mongodb://mongo:27017/authdb
 
 eureka:
   client:
     service-url:
-      defaultZone: http://localhost:8761/eureka
+      defaultZone: http://eureka-server:8761/eureka
 
 jwt:
   secret: my-super-secret-key

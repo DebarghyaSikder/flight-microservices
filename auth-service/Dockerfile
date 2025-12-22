@@ -1,18 +1,4 @@
-# -------- BUILD STAGE --------
-FROM maven:3.9.6-eclipse-temurin-19 AS build
+FROM eclipse-temurin:17-jre-alpine
 WORKDIR /app
-
-COPY pom.xml .
-COPY src ./src
-
-RUN mvn clean package -DskipTests
-
-
-# -------- RUN STAGE --------
-FROM eclipse-temurin:19-jre-alpine
-WORKDIR /app
-
-COPY --from=build /app/target/*.jar app.jar
-
-EXPOSE 8084
-ENTRYPOINT ["java", "-jar", "app.jar"]
+COPY target/auth-service-0.0.1-SNAPSHOT.jar app.jar
+ENTRYPOINT ["java","-jar","app.jar"]
