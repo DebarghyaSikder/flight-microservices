@@ -5,14 +5,13 @@ spring:
   application:
     name: flight-service
 
-  profiles:
-    active: local
+  profiles: docker
 
   data:
     mongodb:
-      uri: mongodb://localhost:27017/flightdb
+      uri: mongodb://mongo:27017/flightdb
 
 eureka:
   client:
     service-url:
-      defaultZone: http://localhost:8761/eureka
+      defaultZone: http://eureka-server:8761/eureka
