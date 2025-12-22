@@ -1,0 +1,17 @@
+server:
+  port: 8084
+
+spring:
+  application:
+    name: notification-service
+
+  profiles: docker
+
+  data:
+    mongodb:
+      uri: mongodb://mongo:27017/flightdb
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://eureka-server:8761/eureka
